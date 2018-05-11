@@ -1,0 +1,6 @@
+framework module Pods_RxLineableSampleTests {
+  umbrella header "Pods-RxLineableSampleTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
