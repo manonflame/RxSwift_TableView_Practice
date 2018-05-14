@@ -32,12 +32,13 @@ class UsersViewModel{
     private init(){
         print("UserViewModel init()")
         self.dataSource = self.privateDataSource.asObservable()
-        
-        
+    
         var i = 0
         var initUsers = [User]()
-        for i in i ..< 30 {
-            var initUser = User(name: "\(i)", index: i)
+        
+        let names = ["Tylor", "Boo", "Min", "Allen", "Edgar", "Ben", "Jayden", "Kayla", "Joe", "Jason", "Katherine", "Ko", "Paul"]
+        for i in i ..< 13 {
+            var initUser = User(name: names[i], index: i)
             initUsers.append(initUser)
         }
         self.privateDataSource.accept(initUsers)
@@ -112,6 +113,14 @@ class UsersViewModel{
         print("row : \(row) , set : \(set)")
         users[row].noti = set
         self.privateDataSource.accept(users)
+    }
+    
+    
+    func bindItemDeleted(subject: ControlEvent<IndexPath>){
+        subject.subscribe(
+            onNext: { element in 
+                print("deletedRow2 : \(element[1])")
+        }).disposed(by: disposeBag)
     }
     
     
