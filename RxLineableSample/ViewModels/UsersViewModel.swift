@@ -10,11 +10,12 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+
 class UsersViewModel{
     
     var index = -1
-    
     var order = 1
+    
     
     static let Instance : UsersViewModel = {
         return UsersViewModel()
@@ -22,7 +23,7 @@ class UsersViewModel{
     
     private var privateDataSource = BehaviorRelay<[User]>.init(value: [])
 //    private let privateDataSource2 = BehaviorSubject<[User]>(value: []) //case2
-//    private let privateDataSource3 : Variable<[User]> = Variable([]) //case3
+    private let privateDataSource3 : Variable<[User]> = Variable([]) //case3
     private let disposeBag = DisposeBag()
     
     public var dataSource: Observable<[User]>
@@ -32,6 +33,7 @@ class UsersViewModel{
     private init(){
         print("UserViewModel init()")
         self.dataSource = self.privateDataSource.asObservable()
+        
     
         var i = 0
         var initUsers = [User]()
@@ -44,6 +46,9 @@ class UsersViewModel{
         self.privateDataSource.accept(initUsers)
 //        self.dataSource2 = self.privateDataSource2.asObservable() //case2
 //        self.dataSource3 = self.privateDataSource3.asObservable() //case3
+        
+        
+        
     }
     
     func addUser(name: String){
@@ -86,6 +91,7 @@ class UsersViewModel{
         self.privateDataSource.accept(users)
     }
     
+    //순서변경
     func bindWith(segmentedTap: Driver<Int>){
         var users = self.privateDataSource.value
         
@@ -94,6 +100,7 @@ class UsersViewModel{
                 element in
                 print("segmented Contoll : \(element)")
                 if element == 1{
+            
                     users.sort{
                         $0.index < $1.index
                     }
@@ -122,8 +129,6 @@ class UsersViewModel{
                 print("deletedRow2 : \(element[1])")
         }).disposed(by: disposeBag)
     }
-    
-    
 }
 
 

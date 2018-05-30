@@ -60,6 +60,7 @@ class AllViewController: UITableViewController {
     }
     
     private func setupTableViewBinding(){
+        
         viewModel.dataSource.bind(to: self.tableView.rx.items){
             (tableView, row, element) in
             let indexPath = IndexPath(row: row, section: 0)
@@ -108,26 +109,6 @@ class AllViewController: UITableViewController {
         self.viewModel.bindItemDeleted(subject: subject)
     }
     
-    func confirmAlertAddToFav(row: Int){
-        
-        let confirmAlert = UIAlertController(title: "Add to Favorites?", message: "즐찾?", preferredStyle: .alert)
-        
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel){
-            (_) in
-            return
-        }
-        
-        let confirm = UIAlertAction(title: "Add", style: .default){
-            (_) in
-            self.viewModel.addToFavorites(row: row)
-            return
-        }
-        confirmAlert.addAction(cancel)
-        confirmAlert.addAction(confirm)
-        self.present(confirmAlert, animated: true)
-    }
-    
-    
     func confirmAlertAddToFavRx(row: Int){
         let actions: [UIAlertController.AlertAction] = [
         .action(title: "Cancel", style: .destructive),
@@ -138,14 +119,33 @@ class AllViewController: UITableViewController {
         UIAlertController.present(in: self, title: "Add to Favorites?", message: "즐찾?", style: .alert, actions: actions)
         .subscribe(
             onNext: { buttonIndex in
-                print("this is RxUIAlertTest : \(buttonIndex)")}
+                print("this is RxUIAlertTest : \(buttonIndex)")
+                self.viewModel.addToFavorites(row: row)
+        }
         ).disposed(by: disposeBag)
+    }
     
+    func confirmAlertAddToFav(row: Int){
         
-//        var alert = UIAlertController(title: "Add to Favorites?", message: "즐찾?", preferredStyle: .alert)
-//        let no = UIAlertController.AlertAction(title: "Cancel", style: .destructive)
-//        let yes = UIAlertController.AlertAction(title: "Confirm", style: .default)
-    
+        let confirmAlert = UIAlertController(title: "Add to Favorites?", message: "즐찾?", preferredStyle: .alert)
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel){
+            (_) in
+            return
+        }
+        
+        
+        
+        let confirm = UIAlertAction(title: "Add", style: .default){
+            (_) in
+            self.viewModel.addToFavorites(row: row)
+            return
+        }
+        
+        confirmAlert.addAction(cancel)
+        confirmAlert.addAction(confirm)
+        
+        self.present(confirmAlert, animated: true)
     }
     
     
@@ -183,7 +183,6 @@ extension UIAlertController{
         -> Observable<Int>{
             return Observable.create { observer in
                 let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
-                
                 actions.enumerated().forEach { index, action in
                     let action = UIAlertAction(title: action.title, style: action.style){ _ in
                         observer.onNext(index)
@@ -191,7 +190,6 @@ extension UIAlertController{
                     }
                     alertController.addAction(action)
                 }
-                
                 viewController.present(alertController, animated: true, completion: nil)
                 return Disposables.create { alertController.dismiss(animated: true, completion: nil)}
             }
